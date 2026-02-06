@@ -31,7 +31,7 @@ export default function Hero({ loaderComplete = true }) {
   const skillsRef = useRef(null);
 
   const handleInitialAnimationComplete = () => {
-    // Animation complete
+    // 4-degree animation complete - MacModel handles scroll unlock
   };
 
   return (
@@ -41,7 +41,12 @@ export default function Hero({ loaderComplete = true }) {
 
       {/* Fixed 3D Canvas Container */}
       <div style={{ position: 'fixed', width: '100vw', height: '100vh', top: 0, left: 0, zIndex: 0, pointerEvents: 'none' }}>
-        <Canvas camera={{ position: [0, 2, 5], fov: 45 }} style={{ background: '#0a0a0a' }}>
+        <Canvas 
+          frameloop={loaderComplete ? 'always' : 'never'}
+          camera={{ position: [0, 2, 5], fov: 45 }} 
+          style={{ background: '#0a0a0a' }}
+          dpr={[1, Math.min(1.5, typeof window !== 'undefined' ? window.devicePixelRatio : 1)]}
+        >
           {/* Basic Lights */}
           <ambientLight intensity={0.15} />
           <directionalLight position={[5, 5, 5]} intensity={0.3} />

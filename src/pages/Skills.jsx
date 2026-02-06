@@ -105,6 +105,7 @@ const Skills = () => {
               alignItems: 'center',
               perspective: '1000px',
               cursor: 'pointer',
+              minHeight: '500px',
             }}
             onClick={() => setShowTechStack(!showTechStack)}
           >
@@ -112,19 +113,19 @@ const Skills = () => {
               src="/images/Apple%20Watch%2038mm%20Space%20Gray%20Aluminum%20+%20Black/Volt%20Nike%20Open.svg"
               alt="Apple Watch Tech Stack Display"
               style={{
-                width: '100px',
-                height: 'auto',
-                filter: 'drop-shadow(0 30px 60px rgba(255, 255, 255, 0.1))',
+                width: '400px',
+                height: '400px',
+                filter: 'drop-shadow(0 30px 60px rgba(255, 255, 255, 0.15))',
                 objectFit: 'contain',
                 transition: 'transform 0.3s ease, filter 0.3s ease',
               }}
               onMouseEnter={(e) => {
                 e.target.style.transform = 'scale(1.05)';
-                e.target.style.filter = 'drop-shadow(0 35px 70px rgba(255, 255, 255, 0.15))';
+                e.target.style.filter = 'drop-shadow(0 35px 70px rgba(255, 255, 255, 0.25))';
               }}
               onMouseLeave={(e) => {
                 e.target.style.transform = 'scale(1)';
-                e.target.style.filter = 'drop-shadow(0 30px 60px rgba(255, 255, 255, 0.1))';
+                e.target.style.filter = 'drop-shadow(0 30px 60px rgba(255, 255, 255, 0.15))';
               }}
             />
           </div>

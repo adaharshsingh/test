@@ -12,12 +12,12 @@ function App() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Lock scroll during intro
+    // Lock scroll only during intro - MacModel handles its own scroll lock
     if (showLoader) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
     } else {
-      // Unlock scroll after intro completes
+      // Unlock scroll after intro - MacModel takes over from here
       document.body.style.overflow = 'auto';
       document.documentElement.style.overflow = 'auto';
     }

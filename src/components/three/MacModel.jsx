@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
+import { useThree } from '@react-three/fiber';
 import { gsap } from 'gsap';
 import * as THREE from 'three';
 
@@ -29,6 +30,7 @@ const SCROLL = {
  */
 function MacModel({ textContainerRef, aboutMeRef, skillsRef, startAnimation = true, onInitialAnimationComplete }) {
   const { scene } = useGLTF('/models/mac.glb');
+  const { invalidate } = useThree();
   const macRef = useRef();
   const groupRef = useRef();
   const lidRef = useRef();
@@ -46,6 +48,42 @@ function MacModel({ textContainerRef, aboutMeRef, skillsRef, startAnimation = tr
   const hasAppliedM3Ref = useRef(false);
   const isAnimatingRef = useRef(false);
   const animationStartedRef = useRef(false);
+
+  // ========================================
+  // FIX 2: PRE-WARM SHADERS
+  // ========================================
+  useEffect(() => {
+    if (!scene) return;
+    
+    // Force material updates to pre-compile shaders
+    scene.traverse(obj => {
+      if (obj.material) {
+        obj.material.needsUpdate = true;
+      }
+    });
+    
+    invalidate();
+  }, [scene, invalidate]);
+
+  // ========================================
+  // FIX 4: INVALIDATE ON SCROLL (Only render when needed)
+  // ========================================
+  useEffect(() => {
+    let scrollTimeout;
+    const handleScroll = () => {
+      invalidate();
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        // Throttle next invalidation
+      }, 16);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, [invalidate]);
 
   // ========================================
   // MAIN SETUP & SCROLL HANDLER
@@ -94,15 +132,19 @@ function MacModel({ textContainerRef, aboutMeRef, skillsRef, startAnimation = tr
 
     animationStartedRef.current = true;
 
+    // LOCK SCROLL IMMEDIATELY - don't wait for timeline delay
+    isAnimatingRef.current = true;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    window.scrollTo(0, 0);
+
     const timeline = gsap.timeline({ 
       delay: 0.5,
-      onStart: () => {
-        isAnimatingRef.current = true;
-        document.body.style.overflow = 'hidden';
-      },
       onComplete: () => {
         isAnimatingRef.current = false;
+        document.documentElement.style.overflow = 'auto';
         document.body.style.overflow = 'auto';
+        window.scrollTo(0, 0);
         if (onInitialAnimationComplete) {
           onInitialAnimationComplete();
         }
