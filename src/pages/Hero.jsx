@@ -4,6 +4,7 @@ import { OrbitControls } from '@react-three/drei';
 import MacModel from '../components/three/MacModel';
 import HeroText from '../components/hero/HeroText';
 import ScrollInstructions from '../components/hero/ScrollInstructions';
+import Navbar from '../components/Navbar';
 import About from './About';
 import Skills from './Skills';
 
@@ -18,13 +19,13 @@ import Skills from './Skills';
  * - Smooth scroll-driven animations
  * 
  * Animation Flow:
- * 1. Initial: 4-degree opening (2s, scroll disabled)
+ * 1. Initial: 4-degree opening (2s, scroll disabled) - AFTER intro loader completes
  * 2. Scroll 0-1000px: Lid opens to 90°, rainbow → M3 wallpaper
  * 3. Scroll 1000-3000px: Mac centered with M3 wallpaper
  * 4. Scroll 3000-4000px: Mac moves left, About Me appears
  * 5. Scroll 4000-5000px: Exit animations, Skills appears
  */
-export default function Hero() {
+export default function Hero({ loaderComplete = true }) {
   const textContainerRef = useRef(null);
   const aboutMeRef = useRef(null);
   const skillsRef = useRef(null);
@@ -34,9 +35,12 @@ export default function Hero() {
   };
 
   return (
-    <div style={{ width: '100vw', minHeight: '500vh', background: '#000' }}>
+    <div style={{ width: '100vw', minHeight: '100vh', background: '#000', position: 'relative' }}>
+      {/* Navbar */}
+      <Navbar isIntroComplete={loaderComplete} />
+
       {/* Fixed 3D Canvas Container */}
-      <div style={{ position: 'fixed', width: '100vw', height: '100vh', top: 0, left: 0 }}>
+      <div style={{ position: 'fixed', width: '100vw', height: '100vh', top: 0, left: 0, zIndex: 0, pointerEvents: 'none' }}>
         <Canvas camera={{ position: [0, 2, 5], fov: 45 }} style={{ background: '#0a0a0a' }}>
           {/* Basic Lights */}
           <ambientLight intensity={0.15} />
@@ -47,6 +51,7 @@ export default function Hero() {
             textContainerRef={textContainerRef}
             aboutMeRef={aboutMeRef}
             skillsRef={skillsRef}
+            startAnimation={loaderComplete}
             onInitialAnimationComplete={handleInitialAnimationComplete}
           />
 
@@ -70,24 +75,7 @@ export default function Hero() {
       {/* About Me Section */}
       <About aboutMeRef={aboutMeRef} />
 
-      {/* Skills Section */}
-      <div
-        ref={skillsRef}
-        style={{
-          position: 'fixed',
-          top: '100vh',
-          left: 0,
-          width: '100vw',
-          minHeight: '100vh',
-          zIndex: 5,
-          opacity: 0,
-          transition: 'opacity 0.3s ease'
-        }}
-      >
-        <Skills />
-      </div>
-
-      {/* Spacer for scrolling - adjusted for shorter timeline */}
+      {/* Spacer for scrolling through hero section */}
       <div style={{ height: '500vh' }} />
     </div>
   );

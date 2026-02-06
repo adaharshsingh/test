@@ -27,7 +27,7 @@ const SCROLL = {
  * - 4500-5500px: Exit animations, Skills transitions up
  * - 5500px+: Skills section full view
  */
-function MacModel({ textContainerRef, aboutMeRef, skillsRef, onInitialAnimationComplete }) {
+function MacModel({ textContainerRef, aboutMeRef, skillsRef, startAnimation = true, onInitialAnimationComplete }) {
   const { scene } = useGLTF('/models/mac.glb');
   const macRef = useRef();
   const groupRef = useRef();
@@ -45,6 +45,7 @@ function MacModel({ textContainerRef, aboutMeRef, skillsRef, onInitialAnimationC
   const rainbowTextureRef = useRef(null);
   const hasAppliedM3Ref = useRef(false);
   const isAnimatingRef = useRef(false);
+  const animationStartedRef = useRef(false);
 
   // ========================================
   // MAIN SETUP & SCROLL HANDLER
@@ -87,6 +88,12 @@ function MacModel({ textContainerRef, aboutMeRef, skillsRef, onInitialAnimationC
     // ========================================
     // INITIAL 4-DEGREE OPENING ANIMATION
     // ========================================
+    if (!startAnimation || animationStartedRef.current) {
+      return; // Don't start animation if loader is still showing or already started
+    }
+
+    animationStartedRef.current = true;
+
     const timeline = gsap.timeline({ 
       delay: 0.5,
       onStart: () => {
@@ -331,7 +338,7 @@ function MacModel({ textContainerRef, aboutMeRef, skillsRef, onInitialAnimationC
       timeline.kill();
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [scene, textContainerRef, aboutMeRef, skillsRef, onInitialAnimationComplete]);
+  }, [scene, textContainerRef, aboutMeRef, skillsRef, startAnimation, onInitialAnimationComplete]);
 
   // ========================================
   // RENDER
